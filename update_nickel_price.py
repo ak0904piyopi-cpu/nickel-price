@@ -74,8 +74,7 @@ def fetch_nickel_prices_usd_lb() -> list[dict]:
     rows: list[dict] = []
     for year, pdf_url in _find_nickel_pdfs():
         resp = requests.get(pdf_url, timeout=30)
-        resp.raise_for_status()
-        if not resp.content.startswith(b"%PDF"):
+        if resp.status_code != 200 or not resp.content.startswith(b"%PDF"):
             continue
         rows.extend(_parse_nickel_pdf(resp.content, year))
     rows.sort(key=lambda r: r["date"])
